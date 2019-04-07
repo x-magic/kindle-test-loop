@@ -1,0 +1,9 @@
+{
+	"items": [
+	{
+		"name": "Battery Test Loop",
+		"priority": -999,
+		"action": "./bin/testloop.sh"
+	}
+	]
+}
