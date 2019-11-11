@@ -54,7 +54,7 @@ sleep 1
 
 while true
 do
-    /usr/sbin/eips 22 39  '      '
+    /usr/sbin/eips 22 39 '      '
     /usr/sbin/eips 10 10 '========== UPDATING =========='
     /usr/sbin/eips  8 18 '                                  '
     /usr/sbin/eips 24 26 '   '
