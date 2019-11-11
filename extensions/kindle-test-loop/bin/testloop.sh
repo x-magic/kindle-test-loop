@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd "$(dirname "$0")"
+
 /etc/init.d/framework stop
 /etc/init.d/powerd stop
 /etc/init.d/cmd stop
@@ -58,7 +60,17 @@ do
     /usr/sbin/eips 24 26 '   '
     /usr/sbin/eips 22 32 '    '
     
-    sleep 10
+    # Detect if home button is pressed, and reboot the device accordingly
+    ./evtest-jessie-armel /dev/input/event0 > /tmp/event0.dmp & sleep 5 ; kill $!
+    wait
+    if grep -q "type 1 (EV_KEY), code 102 (KEY_HOME), value 1" /tmp/event0.dmp; then
+        /sbin/reboot
+    fi
+    
+    # Always reconnect to wlan with wpa_cli and wait for 5 seconds
+    # Courtesy of https://www.mobileread.com/forums/showthread.php?t=312150
+    /usr/bin/wpa_cli -i wlan0 reconnect
+    sleep 5
     
     # Test network status
     ping -c 5 www.microsoft.com
@@ -67,6 +79,8 @@ do
         /usr/sbin/eips 10 10 '**** NETWORK DISCONNECTED ****'
     else
         /usr/sbin/eips 10 10 '     NETWORK IS AVAILABLE     '
+        # Why not update the time when network is available?
+        /usr/bin/ntpdate -s pool.ntp.org
     fi
     
     sleep 15
